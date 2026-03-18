@@ -1,0 +1,63 @@
+version: "3"
+
+vars:
+  EXAMPLES_DIR: examples
+
+tasks:
+  clean:
+    desc: Remove all Terraform state, lock files, and .terraform/ directories from every example
+    cmds:
+      - |
+        find {{.EXAMPLES_DIR}} -name "*.tfstate" -o -name "*.tfstate.backup" -o -name "*.lock.*" | xargs rm -f 2>/dev/null
+        find {{.EXAMPLES_DIR}} -type d -name ".terraform" | xargs rm -rf 2>/dev/null
+        echo "Cleaned all Terraform artifacts from {{.EXAMPLES_DIR}}/"
+
+  validate:
+    desc: Run init, plan, apply, and destroy on every example folder
+    deps: [clean]
+    cmds:
+      - |
+        FAILED_DIRS=""
+        # Find all directories containing .tf files (Terraform root modules)
+        # Skip debug/ and old-way/ (old-way is intentionally demonstrating the broken pattern)
+        for dir in $(find {{.EXAMPLES_DIR}} -name '*.tf' -not -path '*/debug/*' -not -path '*/.terraform/*' -exec dirname {} \; | sort -u); do
+          echo ""
+          echo "=========================================="
+          echo "  $dir"
+          echo "=========================================="
+
+          DIR_OK=1
+          for step in \
+            "terraform -chdir=$dir init -input=false" \
+            "terraform -chdir=$dir plan -input=false" \
+            "terraform -chdir=$dir apply -auto-approve -input=false" \
+            "terraform -chdir=$dir destroy -auto-approve -input=false"; do
+
+            echo "--- $step ---"
+            if ! $step 2>&1; then
+              echo ""
+              echo "ERROR: '$step' failed in $dir"
+              DIR_OK=0
+              break
+            fi
+          done
+
+          if [ $DIR_OK -eq 0 ]; then
+            FAILED_DIRS="$FAILED_DIRS\n  - $dir"
+          fi
+        done
+
+        echo ""
+        if [ -n "$FAILED_DIRS" ]; then
+          echo "RESULT: Some examples failed:"
+          echo -e "$FAILED_DIRS"
+          exit 1
+        else
+          echo "RESULT: All examples passed."
+        fi
+      - task: clean
+
+  record:01-hello-action:
+    desc: Regenerate the demo GIF for examples/01-hello-action
+    cmds:
+      - vhs assets/01-hello-action.tape
