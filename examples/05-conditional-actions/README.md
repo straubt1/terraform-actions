@@ -16,47 +16,51 @@ terraform init
 
 # Default — dev environment, notifications enabled
 terraform apply
-
-# Production environment with notifications
-terraform apply -var environment=prod
-
-# Disable notifications — the log_change action will NOT run
-terraform apply -replace=random_pet.this -var send_notifications=false
-
-# Force recreate to observe actions again
-terraform apply -replace=random_pet.this
 ```
-
-To invoke actions standalone (no resource changes):
 
 ```shell
-terraform apply -invoke=action.local_command.check_env
-terraform apply -invoke=action.local_command.check_env -var environment=prod
-terraform apply -invoke=action.local_command.log_change
+# Disable notifications — the log_change action will NOT run
+terraform apply -invoke=action.local_command.check_env -var environment=dev -var send_notifications=false
 ```
+
+![demo](../../assets/05-conditional-actions-01.gif)
+
 
 ## Expected Output
 
-With `send_notifications=true` (default), both actions run:
+**Default apply:**
 
 ```
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 2 to invoke.
 Action started: action.local_command.check_env (triggered by random_pet.this)
-...Checking environment: dev...
-...Deploying to dev environment...
-Action complete: action.local_command.check_env (triggered by random_pet.this)
+Action action.local_command.check_env (triggered by random_pet.this):
 
+<timestamp>: Checking environment: prod
+WARNING: You are deploying to PRODUCTION!
+
+
+Action complete: action.local_command.check_env (triggered by random_pet.this)
 random_pet.this: Creating...
 random_pet.this: Creation complete after 0s [id=<pet-name>]
-
 Action started: action.local_command.log_change (triggered by random_pet.this)
-...Change applied to dev environment — logging complete...
+Action action.local_command.log_change (triggered by random_pet.this):
+
+<timestamp>: Change applied to prod environment — logging complete
+
+
 Action complete: action.local_command.log_change (triggered by random_pet.this)
 ```
 
-With `send_notifications=false`, only the `check_env` action runs — the `log_change` action is skipped entirely and does not appear in the plan.
-
-With `environment=prod`, the `check_env` script outputs a warning:
+**Disable notifications:**
 
 ```
-WARNING: You are deploying to PRODUCTION!
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Action started: action.local_command.check_env (triggered by CLI)
+Action action.local_command.check_env (triggered by CLI):
+
+<timestamp>: Checking environment: dev
+Deploying to dev environment.
+
+
+Action complete: action.local_command.check_env (triggered by CLI)
 ```

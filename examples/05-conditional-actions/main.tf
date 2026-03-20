@@ -12,7 +12,7 @@ terraform {
 variable "environment" {
   description = "Target environment (dev, staging, prod). Passed to action scripts to control behavior."
   type        = string
-  default     = "dev"
+  default     = "prod"
 }
 
 variable "send_notifications" {

@@ -1,0 +1,150 @@
+=== SECTION 1: Old way ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+  # terraform_data.after will be created
+  + resource "terraform_data" "after" {
+      + id               = (known after apply)
+      + triggers_replace = [
+          + (known after apply),
+        ]
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + pet_name = (known after apply)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=touched-dragon]
+terraform_data.after: Creating...
+terraform_data.after: Provisioning with 'local-exec'...
+terraform_data.after (local-exec): Executing: ["/bin/sh" "-c" "echo \"$(date): AFTER random_pet create/update — pet name: touched-dragon\""]
+terraform_data.after (local-exec): Fri Mar 20 09:22:34 CDT 2026: AFTER random_pet create/update — pet name: touched-dragon
+terraform_data.after: Creation complete after 0s [id=6c1c0bf2-eee4-bdc2-4eb8-627c348d5927]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+pet_name = "touched-dragon"
+
+=== SECTION 2: New way ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "notify" {
+        config {
+            arguments = [
+                "scripts/notify.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Changes to Outputs:
+  + pet_name = (known after apply)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=famous-gull]
+Action started: action.local_command.notify (triggered by random_pet.this)
+Action action.local_command.notify (triggered by random_pet.this): 
+
+Fri Mar 20 09:22:38 CDT 2026: AFTER — random_pet create/update complete
+
+
+Action complete: action.local_command.notify (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "famous-gull"
+
+=== SECTION 3: Old way — force replace ===
+random_pet.this: Refreshing state... [id=touched-dragon]
+terraform_data.after: Refreshing state... [id=6c1c0bf2-eee4-bdc2-4eb8-627c348d5927]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # terraform_data.after will be replaced, as requested
+-/+ resource "terraform_data" "after" {
+      ~ id               = "6c1c0bf2-eee4-bdc2-4eb8-627c348d5927" -> (known after apply)
+        # (1 unchanged attribute hidden)
+    }
+
+Plan: 1 to add, 0 to change, 1 to destroy.
+terraform_data.after: Destroying... [id=6c1c0bf2-eee4-bdc2-4eb8-627c348d5927]
+terraform_data.after: Destruction complete after 0s
+terraform_data.after: Creating...
+terraform_data.after: Provisioning with 'local-exec'...
+terraform_data.after (local-exec): Executing: ["/bin/sh" "-c" "echo \"$(date): AFTER random_pet create/update — pet name: touched-dragon\""]
+terraform_data.after (local-exec): Fri Mar 20 09:22:38 CDT 2026: AFTER random_pet create/update — pet name: touched-dragon
+terraform_data.after: Creation complete after 0s [id=08d23c37-380f-528d-a99d-7b1c307535c9]
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed.
+
+Outputs:
+
+pet_name = "touched-dragon"
+
+=== SECTION 4: New way — invoke standalone ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.notify will be invoked
+    action "local_command" "notify" {
+        config {
+            arguments = [
+                "scripts/notify.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.notify (triggered by CLI)
+Action action.local_command.notify (triggered by CLI): 
+
+Fri Mar 20 09:22:39 CDT 2026: AFTER — random_pet create/update complete
+
+
+Action complete: action.local_command.notify (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "famous-gull"
+

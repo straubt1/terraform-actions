@@ -15,11 +15,15 @@ terraform init
 terraform apply
 ```
 
+![terraform apply](../../assets/01-hello-action-01.gif)
+
 To force the resource to be recreated (triggering actions again):
 
 ```shell
 terraform apply -replace=random_pet.this
 ```
+
+![terraform apply -replace](../../assets/01-hello-action-02.gif)
 
 To invoke the action standalone (no resource changes):
 
@@ -27,11 +31,16 @@ To invoke the action standalone (no resource changes):
 terraform apply -invoke=action.local_command.hello
 ```
 
+![terraform apply -invoke](../../assets/01-hello-action-03.gif)
+
 ## Expected Output
 
-During `terraform apply`, after the `random_pet` resource is created, you should see:
+**Default apply:**
 
 ```
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=<pet-name>]
 Action started: action.local_command.hello (triggered by random_pet.this)
 Action action.local_command.hello (triggered by random_pet.this):
 
@@ -40,8 +49,30 @@ Hello from Terraform Actions!
 Action complete: action.local_command.hello (triggered by random_pet.this)
 ```
 
-The plan summary will show:
+**Force recreate:**
 
 ```
-Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 1 to invoke.
+random_pet.this: Destroying... [id=<pet-name>]
+random_pet.this: Destruction complete after 0s
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=<pet-name>]
+Action started: action.local_command.hello (triggered by random_pet.this)
+Action action.local_command.hello (triggered by random_pet.this):
+
+Hello from Terraform Actions!
+
+Action complete: action.local_command.hello (triggered by random_pet.this)
+```
+
+**Invoke standalone:**
+
+```
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Action started: action.local_command.hello (triggered by CLI)
+Action action.local_command.hello (triggered by CLI):
+
+Hello from Terraform Actions!
+
+Action complete: action.local_command.hello (triggered by CLI)
 ```

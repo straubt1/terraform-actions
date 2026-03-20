@@ -57,7 +57,115 @@ tasks:
         fi
       - task: clean
 
-  record:01-hello-action:
-    desc: Regenerate the demo GIF for examples/01-hello-action
+  capture:01-hello-action:
+    desc: Run capture script and update Expected Output in examples/01-hello-action
     cmds:
-      - vhs assets/01-hello-action.tape
+      - bash assets/01-hello-action-capture.sh > assets/01-hello-action-output.txt 2>&1
+
+  capture:02-old-way-vs-new-way:
+    desc: Run capture script and update Expected Output in examples/02-old-way-vs-new-way
+    cmds:
+      - bash assets/02-old-way-vs-new-way-capture.sh > assets/02-old-way-vs-new-way-output.txt 2>&1
+
+  capture:03-before-after:
+    desc: Run capture script and update Expected Output in examples/03-before-after
+    cmds:
+      - bash assets/03-before-after-capture.sh > assets/03-before-after-output.txt 2>&1
+
+  capture:04-multiple-actions:
+    desc: Run capture script and update Expected Output in examples/04-multiple-actions
+    cmds:
+      - bash assets/04-multiple-actions-capture.sh > assets/04-multiple-actions-output.txt 2>&1
+
+  capture:05-conditional-actions:
+    desc: Run capture script and update Expected Output in examples/05-conditional-actions
+    cmds:
+      - bash assets/05-conditional-actions-capture.sh > assets/05-conditional-actions-output.txt 2>&1
+
+  capture:06-invoke-only:
+    desc: Run capture script and update Expected Output in examples/06-invoke-only
+    cmds:
+      - bash assets/06-invoke-only-capture.sh > assets/06-invoke-only-output.txt 2>&1
+
+  capture:07-inline-script:
+    desc: Run capture script and update Expected Output in examples/07-inline-script
+    cmds:
+      - bash assets/07-inline-script-capture.sh > assets/07-inline-script-output.txt 2>&1
+
+  capture:08-action-variables:
+    desc: Run capture script and update Expected Output in examples/08-action-variables
+    cmds:
+      - bash assets/08-action-variables-capture.sh > assets/08-action-variables-output.txt 2>&1
+
+  capture:all:
+    desc: Run all capture scripts and update Expected Output in every example README
+    deps:
+      - capture:01-hello-action
+      - capture:02-old-way-vs-new-way
+      - capture:03-before-after
+      - capture:04-multiple-actions
+      - capture:05-conditional-actions
+      - capture:06-invoke-only
+      - capture:07-inline-script
+      - capture:08-action-variables
+
+  record:all:
+    desc: Generate all demo GIFs for every example
+    deps:
+      - record:01-hello-action
+      - record:02-old-way-vs-new-way
+      - record:03-before-after
+      - record:04-multiple-actions
+      - record:05-conditional-actions
+      - record:06-invoke-only
+      - record:07-inline-script
+      - record:08-action-variables
+
+  record:01-hello-action:
+    desc: Generate the demo GIFs for examples/01-hello-action
+    cmds:
+      - vhs assets/01-hello-action-01.tape
+      - vhs assets/01-hello-action-02.tape
+      - vhs assets/01-hello-action-03.tape
+
+  record:02-old-way-vs-new-way:
+    desc: Generate the demo GIFs for examples/02-old-way-vs-new-way
+    cmds:
+      - vhs assets/02-old-way-vs-new-way-01.tape
+      - vhs assets/02-old-way-vs-new-way-02.tape
+      - vhs assets/02-old-way-vs-new-way-03.tape
+      - vhs assets/02-old-way-vs-new-way-04.tape
+
+  record:03-before-after:
+    desc: Generate the demo GIFs for examples/03-before-after
+    cmds:
+      - vhs assets/03-before-after-01.tape
+      - vhs assets/03-before-after-02.tape
+
+  record:04-multiple-actions:
+    desc: Generate the demo GIFs for examples/04-multiple-actions
+    cmds:
+      - vhs assets/04-multiple-actions-01.tape
+      - vhs assets/04-multiple-actions-02.tape
+
+  record:05-conditional-actions:
+    desc: Generate the demo GIFs for examples/05-conditional-actions
+    cmds:
+      - vhs assets/05-conditional-actions-01.tape
+      - vhs assets/05-conditional-actions-02.tape
+
+  record:06-invoke-only:
+    desc: Generate the demo GIF for examples/06-invoke-only
+    cmds:
+      - vhs assets/06-invoke-only-01.tape
+
+  record:07-inline-script:
+    desc: Generate the demo GIFs for examples/07-inline-script
+    cmds:
+      - vhs assets/07-inline-script-01.tape
+      - vhs assets/07-inline-script-02.tape
+
+  record:08-action-variables:
+    desc: Generate the demo GIF for examples/08-action-variables
+    cmds:
+      - vhs assets/08-action-variables-01.tape

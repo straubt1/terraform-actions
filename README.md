@@ -1,8 +1,6 @@
 # Terraform Actions
 
-Terraform Actions provide a native way to run commands as part of a resource's lifecycle — before or after a *create* or *update* operation. Actions let you codify Day 2 operations (notifications, validations, cache invalidations, etc.) directly alongside the infrastructure they support.
-
-This repository contains working examples that demonstrate how to use Actions with the `local_command` action type, how they improve on traditional approaches, and where the feature is headed.
+Terraform Actions are a native way to run commands during a resource's lifecycle — before or after a *create* or *update* — or standalone via the CLI. This repository contains working examples using the `local_command` action type, comparisons with older approaches, and thoughts on where the feature could go.
 
 ## Getting Started
 
@@ -87,7 +85,7 @@ The `local_command` action type runs a command on the machine executing Terrafor
 | `before_update` | Runs before the resource is updated |
 | `after_update` | Runs after the resource is updated |
 
-> **Note:** Destroy hooks (`before_destroy`, `after_destroy`) are not yet supported. See [The Future](#the-future) section below.
+> **Note:** Destroy hooks (`before_destroy`, `after_destroy`) are not yet supported. See [Thoughts on Additional Features](#thoughts-on-additional-features) below.
 
 ## Triggering Actions
 
@@ -103,6 +101,24 @@ Actions can also be invoked standalone — without any resource changes — usin
 terraform apply -invoke=action.local_command.notify
 ```
 
+## Actions and State
+
+**Actions do not affect Terraform state.** When an action runs — whether triggered by a lifecycle event or invoked standalone — no resources are added, changed, or destroyed in state. The action executes and finishes; state remains untouched.
+
+This is reflected directly in the plan output:
+
+```
+# Lifecycle-triggered (resource + action)
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+# Standalone -invoke (action only)
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+```
+
+Actions are pure side-effect operations — notifications, cache flushes, validations, API calls — that run alongside infrastructure but sit outside Terraform's state machine. A resource can exist in state with zero associated actions, and an action can be invoked repeatedly without ever touching state.
+
 ## Examples
 
 | Example | Description |
@@ -116,9 +132,9 @@ terraform apply -invoke=action.local_command.notify
 | [07-inline-script](examples/07-inline-script/) | Inline bash script in an action block using heredoc syntax |
 | [08-action-variables](examples/08-action-variables/) | Passing variables to actions and overriding them with `-var` on `-invoke` |
 
-## The Future
+## Thoughts on Additional Features
 
-Terraform Actions are still evolving, but here are some key areas that I would love to see in the future.
+Terraform Actions are still evolving. Here are some areas I'd love to see developed further.
 
 > **Note:** These are not committed features — just my wishlist based on user feedback and my own experience building the current implementation.
 
