@@ -1,0 +1,193 @@
+=== SECTION 1: Initial create ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked before this change in order:
+    action "local_command" "before" {
+        config {
+            arguments = [
+                "./scripts/before.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "after" {
+        config {
+            arguments = [
+                "./scripts/after.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 2 to invoke.
+
+Changes to Outputs:
+  + pet_name = (known after apply)
+Action started: action.local_command.before (triggered by random_pet.this)
+Action action.local_command.before (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: BEFORE — preparing to create/update random_pet
+
+
+Action complete: action.local_command.before (triggered by random_pet.this)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=united-goldfish]
+Action started: action.local_command.after (triggered by random_pet.this)
+Action action.local_command.after (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: AFTER — random_pet create/update complete
+
+
+Action complete: action.local_command.after (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 2 invoked.
+
+Outputs:
+
+pet_name = "united-goldfish"
+
+=== SECTION 2: Force recreate ===
+random_pet.this: Refreshing state... [id=united-goldfish]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be replaced, as requested
+-/+ resource "random_pet" "this" {
+      ~ id        = "united-goldfish" -> (known after apply)
+        # (2 unchanged attributes hidden)
+    }
+
+    # Actions to be invoked before this change in order:
+    action "local_command" "before" {
+        config {
+            arguments = [
+                "./scripts/before.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "after" {
+        config {
+            arguments = [
+                "./scripts/after.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 2 to invoke.
+
+Changes to Outputs:
+  ~ pet_name = "united-goldfish" -> (known after apply)
+Action started: action.local_command.before (triggered by random_pet.this)
+Action action.local_command.before (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: BEFORE — preparing to create/update random_pet
+
+
+Action complete: action.local_command.before (triggered by random_pet.this)
+random_pet.this: Destroying... [id=united-goldfish]
+random_pet.this: Destruction complete after 0s
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=ethical-hamster]
+Action started: action.local_command.after (triggered by random_pet.this)
+Action action.local_command.after (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: AFTER — random_pet create/update complete
+
+
+Action complete: action.local_command.after (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 2 invoked.
+
+Outputs:
+
+pet_name = "ethical-hamster"
+
+=== SECTION 3: Invoke standalone ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.before will be invoked
+    action "local_command" "before" {
+        config {
+            arguments = [
+                "./scripts/before.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.before (triggered by CLI)
+Action action.local_command.before (triggered by CLI): 
+
+Thu Mar 19 16:34:01 CDT 2026: BEFORE — preparing to create/update random_pet
+
+
+Action complete: action.local_command.before (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "ethical-hamster"
+
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.after will be invoked
+    action "local_command" "after" {
+        config {
+            arguments = [
+                "./scripts/after.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.after (triggered by CLI)
+Action action.local_command.after (triggered by CLI): 
+
+Thu Mar 19 16:34:01 CDT 2026: AFTER — random_pet create/update complete
+
+
+Action complete: action.local_command.after (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "ethical-hamster"
+

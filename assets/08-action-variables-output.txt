@@ -1,0 +1,147 @@
+=== SECTION 1: Apply/Invoke with default variable values ===
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+
+=== SECTION 2: Override variables from the CLI ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.greet will be invoked
+    action "local_command" "greet" {
+        config {
+            arguments = [
+                "./scripts/greet.sh",
+                "hello from CLI",
+                "info",
+            ]
+            command   = "bash"
+            stdin     = "hello from CLI"
+        }
+    }
+
+Action started: action.local_command.greet (triggered by CLI)
+Action action.local_command.greet (triggered by CLI): 
+
+Thu Mar 19 16:34:00 CDT 2026: [info] Action invoked
+Message (from argument): hello from CLI
+Stdin (from stdin config): hello from CLI
+
+
+Action complete: action.local_command.greet (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.greet will be invoked
+    action "local_command" "greet" {
+        config {
+            arguments = [
+                "./scripts/greet.sh",
+                "custom message",
+                "debug",
+            ]
+            command   = "bash"
+            stdin     = "custom message"
+        }
+    }
+
+Action started: action.local_command.greet (triggered by CLI)
+Action action.local_command.greet (triggered by CLI): 
+
+Thu Mar 19 16:34:00 CDT 2026: [debug] Action invoked
+Message (from argument): custom message
+Stdin (from stdin config): custom message
+
+
+Action complete: action.local_command.greet (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+=== SECTION 3: Invoke the inline info action ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.info will be invoked
+    action "local_command" "info" {
+        config {
+            arguments = [
+                "-c",
+                <<-EOT
+                    echo "=== Action Variables Demo ==="
+                    echo "Message:   default from .tf file"
+                    echo "Log Level: info"
+                    echo "============================="
+                EOT,
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.info (triggered by CLI)
+Action action.local_command.info (triggered by CLI): 
+
+=== Action Variables Demo ===
+Message:   default from .tf file
+Log Level: info
+=============================
+
+
+Action complete: action.local_command.info (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.info will be invoked
+    action "local_command" "info" {
+        config {
+            arguments = [
+                "-c",
+                <<-EOT
+                    echo "=== Action Variables Demo ==="
+                    echo "Message:   overridden"
+                    echo "Log Level: warn"
+                    echo "============================="
+                EOT,
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.info (triggered by CLI)
+Action action.local_command.info (triggered by CLI): 
+
+=== Action Variables Demo ===
+Message:   overridden
+Log Level: warn
+=============================
+
+
+Action complete: action.local_command.info (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+

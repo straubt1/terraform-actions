@@ -1,0 +1,101 @@
+=== SECTION 1: Default apply ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked before this change in order:
+    action "local_command" "check_env" {
+        config {
+            arguments = [
+                "./scripts/check_env.sh",
+                "prod",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "log_change" {
+        config {
+            arguments = [
+                "./scripts/log_change.sh",
+                "prod",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 2 to invoke.
+
+Changes to Outputs:
+  + pet_name = (known after apply)
+Action started: action.local_command.check_env (triggered by random_pet.this)
+Action action.local_command.check_env (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: Checking environment: prod
+WARNING: You are deploying to PRODUCTION!
+
+
+Action complete: action.local_command.check_env (triggered by random_pet.this)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=creative-antelope]
+Action started: action.local_command.log_change (triggered by random_pet.this)
+Action action.local_command.log_change (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: Change applied to prod environment — logging complete
+
+
+Action complete: action.local_command.log_change (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 2 invoked.
+
+Outputs:
+
+pet_name = "creative-antelope"
+
+=== SECTION 2: Disable notifications ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.check_env will be invoked
+    action "local_command" "check_env" {
+        config {
+            arguments = [
+                "./scripts/check_env.sh",
+                "dev",
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.check_env (triggered by CLI)
+Action action.local_command.check_env (triggered by CLI): 
+
+Thu Mar 19 16:34:01 CDT 2026: Checking environment: dev
+Deploying to dev environment.
+
+
+Action complete: action.local_command.check_env (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "creative-antelope"
+

@@ -1,0 +1,97 @@
+=== SECTION 1: No-op apply ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + pet_name = (known after apply)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=inspired-maggot]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+pet_name = "inspired-maggot"
+
+=== SECTION 2: Invoke health check ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.health_check will be invoked
+    action "local_command" "health_check" {
+        config {
+            arguments = [
+                "$(date): Running health check — all systems operational",
+            ]
+            command   = "echo"
+        }
+    }
+
+Action started: action.local_command.health_check (triggered by CLI)
+Action action.local_command.health_check (triggered by CLI): 
+
+$(date): Running health check — all systems operational
+
+
+Action complete: action.local_command.health_check (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "inspired-maggot"
+
+=== SECTION 3: Invoke cache clear ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.cache_clear will be invoked
+    action "local_command" "cache_clear" {
+        config {
+            arguments = [
+                "-c",
+                <<-EOT
+                    echo "$(date): Clearing cache..."
+                    echo "Cache cleared successfully."
+                EOT,
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.cache_clear (triggered by CLI)
+Action action.local_command.cache_clear (triggered by CLI): 
+
+Thu Mar 19 16:34:01 CDT 2026: Clearing cache...
+Cache cleared successfully.
+
+
+Action complete: action.local_command.cache_clear (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "inspired-maggot"
+

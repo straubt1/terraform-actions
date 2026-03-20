@@ -15,10 +15,14 @@ terraform init
 
 # Initial create — triggers both before_create and after_create actions
 terraform apply
+```
 
+```shell
 # Force recreate — triggers before/after actions again
 terraform apply -replace=random_pet.this
 ```
+
+![demo](../../assets/03-before-after-01.gif)
 
 To invoke actions standalone (no resource changes):
 
@@ -27,25 +31,76 @@ terraform apply -invoke=action.local_command.before
 terraform apply -invoke=action.local_command.after
 ```
 
+![demo](../../assets/03-before-after-02.gif)
+
 ## Expected Output
 
-On `terraform apply`, you should see the before action run, then the resource creation, then the after action:
-
-```
-Action started: action.local_command.before (triggered by random_pet.this)
-...BEFORE — preparing to create/update random_pet...
-Action complete: action.local_command.before (triggered by random_pet.this)
-
-random_pet.this: Creating...
-random_pet.this: Creation complete after 0s [id=<pet-name>]
-
-Action started: action.local_command.after (triggered by random_pet.this)
-...AFTER — random_pet create/update complete...
-Action complete: action.local_command.after (triggered by random_pet.this)
-```
-
-The plan summary will show:
+**Initial create:**
 
 ```
 Plan: 1 to add, 0 to change, 0 to destroy. Actions: 2 to invoke.
+Action started: action.local_command.before (triggered by random_pet.this)
+Action action.local_command.before (triggered by random_pet.this):
+
+<timestamp>: BEFORE — preparing to create/update random_pet
+
+
+Action complete: action.local_command.before (triggered by random_pet.this)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=<pet-name>]
+Action started: action.local_command.after (triggered by random_pet.this)
+Action action.local_command.after (triggered by random_pet.this):
+
+<timestamp>: AFTER — random_pet create/update complete
+
+
+Action complete: action.local_command.after (triggered by random_pet.this)
+```
+
+**Force recreate:**
+
+```
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 2 to invoke.
+Action started: action.local_command.before (triggered by random_pet.this)
+Action action.local_command.before (triggered by random_pet.this):
+
+<timestamp>: BEFORE — preparing to create/update random_pet
+
+
+Action complete: action.local_command.before (triggered by random_pet.this)
+random_pet.this: Destroying... [id=<pet-name>]
+random_pet.this: Destruction complete after 0s
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=<pet-name>]
+Action started: action.local_command.after (triggered by random_pet.this)
+Action action.local_command.after (triggered by random_pet.this):
+
+<timestamp>: AFTER — random_pet create/update complete
+
+
+Action complete: action.local_command.after (triggered by random_pet.this)
+```
+
+**Invoke standalone:**
+
+```
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Action started: action.local_command.before (triggered by CLI)
+Action action.local_command.before (triggered by CLI):
+
+<timestamp>: BEFORE — preparing to create/update random_pet
+
+
+Action complete: action.local_command.before (triggered by CLI)
+```
+
+```
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Action started: action.local_command.after (triggered by CLI)
+Action action.local_command.after (triggered by CLI):
+
+<timestamp>: AFTER — random_pet create/update complete
+
+
+Action complete: action.local_command.after (triggered by CLI)
 ```

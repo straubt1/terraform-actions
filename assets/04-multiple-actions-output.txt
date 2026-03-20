@@ -1,0 +1,254 @@
+=== SECTION 1: Initial create ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked before this change in order:
+    action "local_command" "backup" {
+        config {
+            arguments = [
+                "./scripts/backup.sh",
+            ]
+            command   = "bash"
+        }
+    }
+    action "local_command" "validate" {
+        config {
+            arguments = [
+                "./scripts/validate.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "report" {
+        config {
+            arguments = [
+                "./scripts/report.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 3 to invoke.
+
+Changes to Outputs:
+  + pet_name = (known after apply)
+Action started: action.local_command.backup (triggered by random_pet.this)
+Action action.local_command.backup (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: Step 1 — backing up existing config (if any)
+
+
+Action complete: action.local_command.backup (triggered by random_pet.this)
+Action started: action.local_command.validate (triggered by random_pet.this)
+Action action.local_command.validate (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: Step 2 — validating new config content
+
+
+Action complete: action.local_command.validate (triggered by random_pet.this)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=crack-tortoise]
+Action started: action.local_command.report (triggered by random_pet.this)
+Action action.local_command.report (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: Step 3 — reporting config change complete
+
+
+Action complete: action.local_command.report (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 3 invoked.
+
+Outputs:
+
+pet_name = "crack-tortoise"
+
+=== SECTION 2: Force recreate ===
+random_pet.this: Refreshing state... [id=crack-tortoise]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be replaced, as requested
+-/+ resource "random_pet" "this" {
+      ~ id        = "crack-tortoise" -> (known after apply)
+        # (2 unchanged attributes hidden)
+    }
+
+    # Actions to be invoked before this change in order:
+    action "local_command" "backup" {
+        config {
+            arguments = [
+                "./scripts/backup.sh",
+            ]
+            command   = "bash"
+        }
+    }
+    action "local_command" "validate" {
+        config {
+            arguments = [
+                "./scripts/validate.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "report" {
+        config {
+            arguments = [
+                "./scripts/report.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 3 to invoke.
+
+Changes to Outputs:
+  ~ pet_name = "crack-tortoise" -> (known after apply)
+Action started: action.local_command.backup (triggered by random_pet.this)
+Action action.local_command.backup (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: Step 1 — backing up existing config (if any)
+
+
+Action complete: action.local_command.backup (triggered by random_pet.this)
+Action started: action.local_command.validate (triggered by random_pet.this)
+Action action.local_command.validate (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: Step 2 — validating new config content
+
+
+Action complete: action.local_command.validate (triggered by random_pet.this)
+random_pet.this: Destroying... [id=crack-tortoise]
+random_pet.this: Destruction complete after 0s
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=eternal-viper]
+Action started: action.local_command.report (triggered by random_pet.this)
+Action action.local_command.report (triggered by random_pet.this): 
+
+Thu Mar 19 16:34:01 CDT 2026: Step 3 — reporting config change complete
+
+
+Action complete: action.local_command.report (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 3 invoked.
+
+Outputs:
+
+pet_name = "eternal-viper"
+
+=== SECTION 3: Invoke individual actions standalone ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.backup will be invoked
+    action "local_command" "backup" {
+        config {
+            arguments = [
+                "./scripts/backup.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.backup (triggered by CLI)
+Action action.local_command.backup (triggered by CLI): 
+
+Thu Mar 19 16:34:01 CDT 2026: Step 1 — backing up existing config (if any)
+
+
+Action complete: action.local_command.backup (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "eternal-viper"
+
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.validate will be invoked
+    action "local_command" "validate" {
+        config {
+            arguments = [
+                "./scripts/validate.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.validate (triggered by CLI)
+Action action.local_command.validate (triggered by CLI): 
+
+Thu Mar 19 16:34:02 CDT 2026: Step 2 — validating new config content
+
+
+Action complete: action.local_command.validate (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "eternal-viper"
+
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.report will be invoked
+    action "local_command" "report" {
+        config {
+            arguments = [
+                "./scripts/report.sh",
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.report (triggered by CLI)
+Action action.local_command.report (triggered by CLI): 
+
+Thu Mar 19 16:34:02 CDT 2026: Step 3 — reporting config change complete
+
+
+Action complete: action.local_command.report (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "eternal-viper"
+

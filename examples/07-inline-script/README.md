@@ -15,27 +15,23 @@ terraform init
 
 # Create — runs the inline script after the resource is created
 terraform apply
-
-# Force recreate — runs the inline script again
-terraform apply -replace=random_pet.this
 ```
 
-To invoke the action standalone (no resource changes):
-
-```shell
-terraform apply -invoke=action.local_command.inline_script
-```
+![demo](../../assets/07-inline-script-01.gif)
 
 ## Expected Output
 
-On `terraform apply`, after the `random_pet` resource is created, you should see the inline script output:
+On `terraform apply`, you should see:
 
 ```
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=<pet-name>]
 Action started: action.local_command.inline_script (triggered by random_pet.this)
 Action action.local_command.inline_script (triggered by random_pet.this):
 
 === Inline Action Output ===
-Timestamp: <current date/time>
+Timestamp: <timestamp>
 Pet name:  <pet-name>
 ============================
 

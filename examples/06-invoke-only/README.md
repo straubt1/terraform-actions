@@ -25,25 +25,53 @@ terraform init
 
 # There are no resources — a normal apply does nothing
 terraform apply
+```
 
+```shell
 # Invoke the health check action
 terraform apply -invoke=action.local_command.health_check
+```
 
+```shell
 # Invoke the cache clear action
 terraform apply -invoke=action.local_command.cache_clear
-
-# Preview an invoke without executing
-terraform plan -invoke=action.local_command.health_check
 ```
+
+![demo](../../assets/06-invoke-only-01.gif)
 
 ## Expected Output
 
-When invoking `action.local_command.health_check`:
+**No-op apply:**
 
 ```
-Action started: action.local_command.health_check
-...Running health check — all systems operational...
-Action complete: action.local_command.health_check
+Plan: 1 to add, 0 to change, 0 to destroy.
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=<pet-name>]
+```
+
+**Invoke health check:**
+
+```
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Action started: action.local_command.health_check (triggered by CLI)
+Action action.local_command.health_check (triggered by CLI):
+
+$(date): Running health check — all systems operational
+
+Action complete: action.local_command.health_check (triggered by CLI)
+```
+
+**Invoke cache clear:**
+
+```
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+Action started: action.local_command.cache_clear (triggered by CLI)
+Action action.local_command.cache_clear (triggered by CLI):
+
+<timestamp>: Clearing cache...
+Cache cleared successfully.
+
+Action complete: action.local_command.cache_clear (triggered by CLI)
 ```
 
 ## Key Points
