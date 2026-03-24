@@ -131,6 +131,7 @@ Actions are pure side-effect operations — notifications, cache flushes, valida
 | [06-invoke-only](examples/06-invoke-only/) | Standalone actions with no resource ties — invoked only via `-invoke` |
 | [07-inline-script](examples/07-inline-script/) | Inline bash script in an action block using heredoc syntax |
 | [08-action-variables](examples/08-action-variables/) | Passing variables to actions and overriding them with `-var` on `-invoke` |
+| [09-environment-variables](examples/09-environment-variables/) | Injecting environment variables into action scripts using inline exports |
 
 ## Thoughts on Additional Features
 
@@ -196,6 +197,27 @@ resource "local_file" "config" {
 # Ideally, you could express this dependency directly:
 # depends_on = [action.local_command.create_dir]
 ```
+
+### Native Environment Variable Support
+
+Today, injecting environment variables into an action's command requires an inline shell wrapper with `export` statements (see [09-environment-variables](examples/09-environment-variables/)). A native `env` attribute on the `config` block would simplify this pattern:
+
+```hcl
+# Desired syntax (not yet supported)
+action "local_command" "with_env" {
+  config {
+    command   = "bash"
+    arguments = ["scripts/report.sh"]
+    env = {
+      PET_NAME    = random_pet.this.id
+      ENVIRONMENT = var.environment
+      LOG_LEVEL   = var.log_level
+    }
+  }
+}
+```
+
+This would eliminate the need for inline heredoc wrappers and make actions with environment variables cleaner and more readable.
 
 ### Additional Action Types
 
