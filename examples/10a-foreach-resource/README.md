@@ -24,11 +24,15 @@ terraform init
 terraform apply
 ```
 
+![demo](../../assets/10a-foreach-resource-01.gif)
+
 Re-trigger the action for a single resource instance:
 
 ```shell
 terraform apply -replace='random_pet.this["bravo"]'
 ```
+
+![demo](../../assets/10a-foreach-resource-02.gif)
 
 Invoke the (single) action standalone:
 
@@ -36,18 +40,34 @@ Invoke the (single) action standalone:
 terraform apply -invoke=action.local_command.greet
 ```
 
+![demo](../../assets/10a-foreach-resource-03.gif)
+
 ## Expected Output
 
 **Initial apply:**
 
 ```
+Plan: 3 to add, 0 to change, 0 to destroy. Actions: 3 to invoke.
+
+random_pet.this["charlie"]: Creating...
 random_pet.this["alpha"]: Creating...
 random_pet.this["bravo"]: Creating...
-random_pet.this["charlie"]: Creating...
-random_pet.this["alpha"]: Creation complete after 0s [id=<pet-name-a>]
 random_pet.this["bravo"]: Creation complete after 0s [id=<pet-name-b>]
+random_pet.this["alpha"]: Creation complete after 0s [id=<pet-name-a>]
 random_pet.this["charlie"]: Creation complete after 0s [id=<pet-name-c>]
 Action started: action.local_command.greet (triggered by random_pet.this["alpha"])
+Action started: action.local_command.greet (triggered by random_pet.this["bravo"])
+Action started: action.local_command.greet (triggered by random_pet.this["charlie"])
+Action action.local_command.greet (triggered by random_pet.this["charlie"]):
+
+=== Greet Action ===
+All random_pet instances:
+  alpha => <pet-name-a>
+  bravo => <pet-name-b>
+  charlie => <pet-name-c>
+(Note: a non-for_each action cannot tell which specific instance triggered it)
+====================
+
 Action action.local_command.greet (triggered by random_pet.this["alpha"]):
 
 === Greet Action ===
@@ -59,18 +79,32 @@ All random_pet instances:
 ====================
 
 Action complete: action.local_command.greet (triggered by random_pet.this["alpha"])
-... (repeats for "bravo" and "charlie") ...
+Action complete: action.local_command.greet (triggered by random_pet.this["charlie"])
+Action action.local_command.greet (triggered by random_pet.this["bravo"]):
 
-Apply complete! Resources: 3 added, 0 changed, 0 destroyed. Actions: 3 invoked.
+=== Greet Action ===
+All random_pet instances:
+  alpha => <pet-name-a>
+  bravo => <pet-name-b>
+  charlie => <pet-name-c>
+(Note: a non-for_each action cannot tell which specific instance triggered it)
+====================
+
+Action complete: action.local_command.greet (triggered by random_pet.this["bravo"])
 ```
 
 **Replace one instance:**
 
 ```
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 1 to invoke.
+
 random_pet.this["bravo"]: Destroying... [id=<pet-name-b>]
+random_pet.this["bravo"]: Destruction complete after 0s
 random_pet.this["bravo"]: Creating...
 random_pet.this["bravo"]: Creation complete after 0s [id=<pet-name-b2>]
 Action started: action.local_command.greet (triggered by random_pet.this["bravo"])
+Action action.local_command.greet (triggered by random_pet.this["bravo"]):
+
 === Greet Action ===
 All random_pet instances:
   alpha => <pet-name-a>
@@ -79,14 +113,17 @@ All random_pet instances:
 (Note: a non-for_each action cannot tell which specific instance triggered it)
 ====================
 
-Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 1 invoked.
+Action complete: action.local_command.greet (triggered by random_pet.this["bravo"])
 ```
 
 **Invoke standalone:**
 
 ```
 Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
 Action started: action.local_command.greet (triggered by CLI)
+Action action.local_command.greet (triggered by CLI):
+
 === Greet Action ===
 All random_pet instances:
   alpha => <pet-name-a>
@@ -95,5 +132,5 @@ All random_pet instances:
 (Note: a non-for_each action cannot tell which specific instance triggered it)
 ====================
 
-Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+Action complete: action.local_command.greet (triggered by CLI)
 ```

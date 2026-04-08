@@ -24,11 +24,15 @@ terraform init
 terraform apply
 ```
 
+![demo](../../assets/11-api-01.gif)
+
 Re-trigger the API call by replacing the resource:
 
 ```shell
 terraform apply -replace=random_pet.this
 ```
+
+![demo](../../assets/11-api-02.gif)
 
 Invoke the API call standalone, optionally overriding the token:
 
@@ -37,11 +41,15 @@ terraform apply -invoke=action.local_command.call_api
 terraform apply -invoke=action.local_command.call_api -var api_token="another-token"
 ```
 
+![demo](../../assets/11-api-03.gif)
+
 ## Expected Output
 
 **Apply:**
 
 ```
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
 random_pet.this: Creating...
 random_pet.this: Creation complete after 0s [id=<pet-name>]
 Action started: action.local_command.call_api (triggered by random_pet.this)
@@ -52,20 +60,66 @@ Action action.local_command.call_api (triggered by random_pet.this):
   "authenticated": true,
   "token": "demo-token-not-a-real-secret"
 }
+
 ===========================================
 
 Action complete: action.local_command.call_api (triggered by random_pet.this)
-
-Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 1 invoked.
 ```
 
-**Invoke with overridden token:**
+**Replace:**
 
 ```
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 1 to invoke.
+
+random_pet.this: Destroying... [id=<pet-name>]
+random_pet.this: Destruction complete after 0s
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=<pet-name-2>]
+Action started: action.local_command.call_api (triggered by random_pet.this)
+Action action.local_command.call_api (triggered by random_pet.this):
+
+=== Calling https://httpbin.org/bearer ===
+{
+  "authenticated": true,
+  "token": "demo-token-not-a-real-secret"
+}
+
+===========================================
+
+Action complete: action.local_command.call_api (triggered by random_pet.this)
+```
+
+**Invoke standalone (default token, then override):**
+
+```
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Action started: action.local_command.call_api (triggered by CLI)
+Action action.local_command.call_api (triggered by CLI):
+
+=== Calling https://httpbin.org/bearer ===
+{
+  "authenticated": true,
+  "token": "demo-token-not-a-real-secret"
+}
+
+===========================================
+
+Action complete: action.local_command.call_api (triggered by CLI)
+
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Action started: action.local_command.call_api (triggered by CLI)
+Action action.local_command.call_api (triggered by CLI):
+
 === Calling https://httpbin.org/bearer ===
 {
   "authenticated": true,
   "token": "another-token"
 }
+
 ===========================================
+
+Action complete: action.local_command.call_api (triggered by CLI)
 ```
