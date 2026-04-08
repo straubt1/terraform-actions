@@ -36,42 +36,44 @@ LOG_LEVEL=debug terraform apply -replace=random_pet.this -var environment="produ
 
 ## Expected Output
 
-**Apply (default variables):**
+**Apply (default — no LOG_LEVEL set in parent shell):**
 
 ```
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
 random_pet.this: Creating...
-random_pet.this: Creation complete after 0s [id=adequate-oarfish]
+random_pet.this: Creation complete after 0s [id=<pet-name>]
 Action started: action.local_command.report (triggered by random_pet.this)
 Action action.local_command.report (triggered by random_pet.this):
 
 === Environment Report ===
-Pet Name:    adequate-oarfish
+Pet Name:    <pet-name>
 Environment: dev
-Log Level:   info
+Log Level:
 ===========================
 
 Action complete: action.local_command.report (triggered by random_pet.this)
-
-Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 1 invoked.
 ```
 
-**With overridden variables (`-replace` + `-var`):**
+> Note `Log Level:` is empty — the parent shell didn't export `LOG_LEVEL`, so the action's bash subprocess sees no value for `$LOG_LEVEL`.
+
+**With `LOG_LEVEL=debug` and `-var environment="production"`:**
 
 ```
-random_pet.this: Destroying... [id=adequate-oarfish]
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 1 to invoke.
+
+random_pet.this: Destroying... [id=<pet-name>]
 random_pet.this: Destruction complete after 0s
 random_pet.this: Creating...
-random_pet.this: Creation complete after 0s [id=magnetic-redfish]
+random_pet.this: Creation complete after 0s [id=<pet-name-2>]
 Action started: action.local_command.report (triggered by random_pet.this)
 Action action.local_command.report (triggered by random_pet.this):
 
 === Environment Report ===
-Pet Name:    magnetic-redfish
+Pet Name:    <pet-name-2>
 Environment: production
 Log Level:   debug
 ===========================
 
 Action complete: action.local_command.report (triggered by random_pet.this)
-
-Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 1 invoked.
 ```

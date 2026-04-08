@@ -26,8 +26,8 @@ Enter
 Sleep 1s
 Show
 
-# Override environment variables via -var
-Type `terraform apply -replace=random_pet.this -var environment="production" -var log_level="debug"`
+# Override `environment` via -var, and set LOG_LEVEL in the parent shell
+Type `LOG_LEVEL=debug terraform apply -replace=random_pet.this -var environment="production"`
 Enter
 Sleep 2s
 Wait /Enter a value/

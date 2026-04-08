@@ -21,6 +21,9 @@ Sleep 1s
 Type "terraform init"
 Enter
 Sleep 5s
+Type "terraform destroy -auto-approve"
+Enter
+Sleep 5s
 Type "clear"
 Enter
 Sleep 1s

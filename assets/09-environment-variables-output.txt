@@ -30,14 +30,14 @@ Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
 Changes to Outputs:
   + pet_name = (known after apply)
 random_pet.this: Creating...
-random_pet.this: Creation complete after 0s [id=pro-chigger]
+random_pet.this: Creation complete after 0s [id=splendid-marten]
 Action started: action.local_command.report (triggered by random_pet.this)
 Action action.local_command.report (triggered by random_pet.this): 
 
 === Environment Report ===
-Pet Name:    pro-chigger
+Pet Name:    splendid-marten
 Environment: dev
-Log Level:   info
+Log Level:   
 ===========================
 
 
@@ -47,10 +47,10 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 1 invoked.
 
 Outputs:
 
-pet_name = "pro-chigger"
+pet_name = "splendid-marten"
 
-=== SECTION 2: Override environment variables via -var ===
-random_pet.this: Refreshing state... [id=pro-chigger]
+=== SECTION 2: Override environment via -var, LOG_LEVEL via shell env ===
+random_pet.this: Refreshing state... [id=splendid-marten]
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
@@ -60,7 +60,7 @@ Terraform will perform the following actions:
 
   # random_pet.this will be replaced, as requested
 -/+ resource "random_pet" "this" {
-      ~ id        = "pro-chigger" -> (known after apply)
+      ~ id        = "splendid-marten" -> (known after apply)
         # (2 unchanged attributes hidden)
     }
 
@@ -79,16 +79,16 @@ Terraform will perform the following actions:
 Plan: 1 to add, 0 to change, 1 to destroy. Actions: 1 to invoke.
 
 Changes to Outputs:
-  ~ pet_name = "pro-chigger" -> (known after apply)
-random_pet.this: Destroying... [id=pro-chigger]
+  ~ pet_name = "splendid-marten" -> (known after apply)
+random_pet.this: Destroying... [id=splendid-marten]
 random_pet.this: Destruction complete after 0s
 random_pet.this: Creating...
-random_pet.this: Creation complete after 0s [id=teaching-bluegill]
+random_pet.this: Creation complete after 0s [id=capable-phoenix]
 Action started: action.local_command.report (triggered by random_pet.this)
 Action action.local_command.report (triggered by random_pet.this): 
 
 === Environment Report ===
-Pet Name:    teaching-bluegill
+Pet Name:    capable-phoenix
 Environment: production
 Log Level:   debug
 ===========================
@@ -100,5 +100,5 @@ Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 1 invoked.
 
 Outputs:
 
-pet_name = "teaching-bluegill"
+pet_name = "capable-phoenix"
 
