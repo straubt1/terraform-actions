@@ -134,6 +134,7 @@ Actions are pure side-effect operations — notifications, cache flushes, valida
 | [09-environment-variables](examples/09-environment-variables/) | Injecting environment variables into action scripts using inline exports |
 | [10a-foreach-resource](examples/10a-foreach-resource/) | `for_each` on a resource that triggers a single shared action |
 | [10b-foreach-action](examples/10b-foreach-action/) | `for_each` on both the resource and the action, paired by key |
+| [11-api](examples/11-api/) | Calling a real REST API from an action with a bearer token via `curl` |
 
 ## Thoughts on Additional Features
 
