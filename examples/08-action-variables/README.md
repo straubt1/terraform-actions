@@ -9,6 +9,13 @@ Demonstrates passing Terraform variables to actions, including overriding them f
 - The `stdin` config option to pass variable values as standard input to the command
 - Invoke-only actions (no resource lifecycle triggers)
 
+## Key Points
+
+- Variables defined in `.tf` files work the same way with `-invoke` as they do with `terraform apply`
+- Use `-var` to override variables at invocation time — useful for parameterized Day 2 operations
+- The `stdin` config option pipes a value to the command's standard input
+- Variables can be passed as `arguments` (positional) or via `stdin` (streamed)
+
 ## Usage
 
 ```shell
@@ -82,10 +89,3 @@ Log Level: warn
 =============================
 Action complete: action.local_command.info (triggered by CLI)
 ```
-
-## Key Points
-
-- Variables defined in `.tf` files work the same way with `-invoke` as they do with `terraform apply`
-- Use `-var` to override variables at invocation time — useful for parameterized Day 2 operations
-- The `stdin` config option pipes a value to the command's standard input
-- Variables can be passed as `arguments` (positional) or via `stdin` (streamed)

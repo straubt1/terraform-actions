@@ -8,6 +8,13 @@ Demonstrates both `before` and `after` lifecycle hooks using external bash scrip
 - `after_create` and `after_update` events running a script after the resource changes
 - Using external bash scripts as action commands
 
+## Key Points
+
+- Two separate `action_trigger` blocks live in the same `lifecycle` block — one for before events, one for after
+- Both events fire on `-replace` (force recreate), making before/after a clean way to bracket a resource change
+- External scripts keep the action block tidy and let you reuse the same script across actions or examples
+- Each action can be invoked independently with `-invoke`
+
 ## Usage
 
 ```shell

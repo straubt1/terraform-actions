@@ -9,6 +9,13 @@ Demonstrates injecting environment variables into action scripts using inline `e
 - Scripts that read `$PET_NAME`, `$ENVIRONMENT`, `$LOG_LEVEL` from the environment
 - Inheriting an env var (`LOG_LEVEL`) from the parent shell — no Terraform variable required
 
+## Key Points
+
+- Environment variables are cleaner than positional arguments when scripts need many inputs
+- The inline `export` + script call pattern is the current workaround for the lack of a native `env` attribute
+- Env vars set in the parent shell (e.g. `LOG_LEVEL=debug terraform apply`) flow through Terraform into the action's subprocess automatically — no Terraform variable needed
+- See the root README's [Thoughts on Additional Features](../../README.md#thoughts-on-additional-features) for the proposed `env` syntax
+
 ## Usage
 
 ```shell
@@ -68,9 +75,3 @@ Action complete: action.local_command.report (triggered by random_pet.this)
 
 Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 1 invoked.
 ```
-
-## Key Points
-
-- Environment variables are cleaner than positional arguments when scripts need many inputs
-- The inline `export` + script call pattern is the current workaround for the lack of a native `env` attribute
-- See the root README's [Thoughts on Additional Features](../../README.md#thoughts-on-additional-features) for the proposed `env` syntax

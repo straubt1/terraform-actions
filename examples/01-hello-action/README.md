@@ -8,6 +8,13 @@ The simplest possible Terraform Action — a single `after_create` hook that pri
 - The `action_trigger` inside a resource's `lifecycle` block
 - The `after_create` event
 
+## Key Points
+
+- This is the smallest viable Terraform Action — one resource, one trigger, one action
+- The `local_command` action type runs commands on the machine executing Terraform
+- A single `after_create` trigger fires once per resource creation
+- The same action can be re-triggered with `-replace` or invoked standalone with `-invoke`
+
 ## Usage
 
 ```shell

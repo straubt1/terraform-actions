@@ -9,6 +9,13 @@ Demonstrates chaining multiple actions on the same lifecycle event. Actions exec
 - Separate `action_trigger` blocks for before and after events
 - A practical pattern: backup → validate → (resource change) → report
 
+## Key Points
+
+- Multiple actions in one `action_trigger` execute **sequentially**, in list order
+- If an earlier action fails, later actions in the chain do not run
+- Before actions fire even when the resource itself is being destroyed and recreated
+- Each action remains independently addressable for `-invoke`
+
 ## Usage
 
 ```shell

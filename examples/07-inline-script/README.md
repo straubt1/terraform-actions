@@ -8,6 +8,13 @@ Demonstrates writing an inline bash script directly in the action block using a 
 - Referencing Terraform resource attributes inside the script
 - A self-contained action that doesn't require a separate `scripts/` directory
 
+## Key Points
+
+- Inline scripts are best for short, self-contained logic that doesn't warrant a separate file
+- For anything longer than a few lines, prefer an external script in a `scripts/` directory for readability and maintainability
+- Resource attributes can be interpolated directly into the heredoc with `${...}`
+- The heredoc must use `<<-EOF` (with the dash) so leading whitespace is stripped
+
 ## Usage
 
 ```shell
@@ -37,7 +44,3 @@ Pet name:  <pet-name>
 
 Action complete: action.local_command.inline_script (triggered by random_pet.this)
 ```
-
-## When to Use Inline Scripts
-
-Inline scripts are useful for short, self-contained logic that doesn't warrant a separate file. For anything longer than a few lines, consider using an external script in a `scripts/` directory for better readability and maintainability.

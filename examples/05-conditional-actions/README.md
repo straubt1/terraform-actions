@@ -9,6 +9,13 @@ Demonstrates using the `condition` attribute on `action_trigger` to conditionall
 - Passing Terraform variables to action scripts via `arguments`
 - Environment-aware behavior (dev, staging, prod) in action scripts
 
+## Key Points
+
+- `condition` is evaluated at plan time — when false, the action is skipped entirely (not even shown as "to invoke")
+- A common use case is gating notifications, audits, or destructive cleanups behind an environment flag
+- Variables flow from `terraform apply -var` straight into action `arguments`, so the same action can behave differently per environment without code changes
+- Setting `send_notifications=false` cleanly disables one action while leaving the others intact
+
 ## Usage
 
 ```shell
