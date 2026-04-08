@@ -1,20 +1,19 @@
 # Environment Variables
 
-Demonstrates injecting environment variables into action scripts using inline `export` statements. The script reads values from the environment rather than positional arguments.
+Demonstrates injecting environment variables into action scripts using the native `environment` map on `local_command` (available in `hashicorp/local` >= 2.8.0). The script reads values from the environment rather than positional arguments.
 
 ## What It Demonstrates
 
-- Passing resource attributes and Terraform variables as environment variables to action scripts
-- Inline `export` wrapper pattern (since `local_command` doesn't yet support a native `env` config)
+- Passing resource attributes and Terraform variables as environment variables via the native `environment` config attribute
 - Scripts that read `$PET_NAME`, `$ENVIRONMENT`, `$LOG_LEVEL` from the environment
-- Inheriting an env var (`LOG_LEVEL`) from the parent shell — no Terraform variable required
+- Inheriting an env var (`LOG_LEVEL`) from the parent shell — no Terraform variable required, no wrapper needed
 
 ## Key Points
 
 - Environment variables are cleaner than positional arguments when scripts need many inputs
-- The inline `export` + script call pattern is the current workaround for the lack of a native `env` attribute
-- Env vars set in the parent shell (e.g. `LOG_LEVEL=debug terraform apply`) flow through Terraform into the action's subprocess automatically — no Terraform variable needed
-- See the root README's [Thoughts on Additional Features](../../README.md#thoughts-on-additional-features) for the proposed `env` syntax
+- The `environment` map on `local_command`'s `config` block sets variables directly — no inline `export` wrapper required
+- Env vars set in the parent shell (e.g. `LOG_LEVEL=debug terraform apply`) flow through Terraform into the action's subprocess automatically and are merged with the explicit `environment` map
+- Requires `hashicorp/local` provider version `~> 2.8` (see [PR #493](https://github.com/hashicorp/terraform-provider-local/pull/493))
 
 ## Usage
 

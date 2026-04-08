@@ -13,7 +13,7 @@ An action that makes a real HTTP request to a public REST endpoint and prints th
 - `httpbin.org/bearer` is a public echo service — the token is **not real** and is safe to commit
 - Override the token via CLI: `terraform apply -var api_token="my-token"`
 - For production use, the token should come from a secret store (e.g. `data.vault_generic_secret`, env var, or `-var` from a CI secret), not a default
-- A future native `http_request` action type would remove the need to shell out to `curl` (see the root README's [Thoughts on Additional Features](../../README.md#additional-action-types))
+- This example uses `local_command` + `curl` because it is portable and will work for a generic API call. In a real project, prefer a provider-native action type when one exists — it will handle authentication, retries, and errors far better than shelling out to `curl`. Check the documentation of whichever provider owns the API you're calling for supported action types.
 
 ## Usage
 

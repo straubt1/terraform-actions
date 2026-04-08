@@ -1,5 +1,16 @@
 terraform {
-  required_version = ">= 1.11"
+  required_version = ">= 1.14"
+
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.8"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.8"
+    }
+  }
 }
 
 resource "random_pet" "this" {

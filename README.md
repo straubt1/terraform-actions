@@ -1,13 +1,13 @@
 # Terraform Actions
 
-Terraform Actions are a native way to run commands during a resource's lifecycle — before or after a *create* or *update* — or standalone via the CLI. This repository contains working examples using the `local_command` action type, comparisons with older approaches, and thoughts on where the feature could go.
+Terraform Actions are a native way to run provider-defined operations during a resource's lifecycle — before or after a *create* or *update* — or standalone via the CLI. Actions are **provider-specific**: each provider ships its own action types that call real provider APIs, just like resources and data sources do. This repository's examples focus on the `local_command` action type (from the `hashicorp/local` provider) because it is the most generic and portable. In a real project, if a provider ships a dedicated action for what you need (e.g., invalidating a CDN cache, rotating a secret, calling a REST endpoint), prefer that native action over shelling out through `local_command`. Check each provider's documentation for the actions it offers.
 
 ## Getting Started
 
 ### Requirements
 
-- Terraform version that supports the `action` block (1.11+)
-- No cloud credentials required — all examples use local-only resources (`terraform_data`, `random_pet`)
+- Terraform 1.14 or later (required for the `action` block)
+- No cloud credentials required — all examples use local-only providers (`hashicorp/random`, `hashicorp/local`)
 
 ```shell
 git clone https://github.com/straubt1/terraform-actions.git
@@ -70,11 +70,15 @@ resource "random_pet" "this" {
 }
 ```
 
-The `local_command` action type runs a command on the machine executing Terraform. The `config` block accepts:
+The action block's type is a two-part reference — `"<provider_action_type>" "<local_name>"`. In `action "local_command" "notify"`, `local_command` is the action type provided by the `hashicorp/local` provider, and `notify` is the local name used to reference it. Other providers ship their own action types that call real APIs natively; consult each provider's documentation to see what actions it offers.
+
+The `local_command` action type specifically runs a command on the machine executing Terraform. Its `config` block accepts:
 
 - `command` — the executable to run (e.g., `"bash"`, `"python3"`)
 - `arguments` — a list of arguments passed to the command
 - `stdin` — optional value piped to the command's standard input
+
+Because `local_command` shells out locally, it is the most portable action type — perfect for examples and scripts — but it is not the best tool for every job. A provider-native action that calls its API directly will typically give you better authentication, retries, and error handling than a wrapped CLI call.
 
 ## Available Lifecycle Events
 
@@ -236,15 +240,16 @@ With this, a single action could be reused across many resources and still produ
 
 ### Native Environment Variable Support
 
-Today, injecting environment variables into an action's command requires an inline shell wrapper with `export` statements (see [09-environment-variables](examples/09-environment-variables/)). A native `env` attribute on the `config` block would simplify this pattern:
+> **Update:** Implemented in [`hashicorp/local` v2.8.0](https://github.com/hashicorp/terraform-provider-local/pull/493). The `local_command` action's `config` block now accepts a native `environment` map — no more inline `export` wrappers required.
+
+Previously, injecting environment variables into an action's command required an inline shell wrapper with `export` statements (see [09-environment-variables](examples/09-environment-variables/)). The `environment` attribute on the `config` block now handles this natively:
 
 ```hcl
-# Desired syntax (not yet supported)
 action "local_command" "with_env" {
   config {
     command   = "bash"
     arguments = ["scripts/report.sh"]
-    env = {
+    environment = {
       PET_NAME    = random_pet.this.id
       ENVIRONMENT = var.environment
       LOG_LEVEL   = var.log_level
@@ -253,29 +258,7 @@ action "local_command" "with_env" {
 }
 ```
 
-This would eliminate the need for inline heredoc wrappers and make actions with environment variables cleaner and more readable.
-
-### Additional Action Types
-
-`local_command` is the only action type today. A natural next step would be action types that call cloud APIs directly — removing the need for wrapper scripts and CLI tool installations.
-
-For example, Azure Storage Accounts have a `isHnsEnabled` flag (hierarchical namespace) that cannot be modified through the AzureRM Terraform provider after creation. Today you would need a `local_command` action that shells out to the Azure CLI:
-
-```hcl
-action "local_command" "enable_hns" {
-  config {
-    command   = "az"
-    arguments = [
-      "storage", "account", "update",
-      "--name", azurerm_storage_account.this.name,
-      "--resource-group", azurerm_storage_account.this.resource_group_name,
-      "--enable-hierarchical-namespace", "true"
-    ]
-  }
-}
-```
-
-A dedicated `azurerm_cli` or `http_request` action type could handle this natively — with built-in authentication, retry logic, and proper error handling — instead of requiring the Azure CLI to be installed on the machine running Terraform.
+This eliminates the need for inline heredoc wrappers and makes actions with environment variables cleaner and more readable.
 
 ### Terraform CLI List Commands
 

@@ -1,10 +1,14 @@
 terraform {
-  required_version = ">= 1.11"
+  required_version = ">= 1.14"
 
   required_providers {
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.0"
+      version = "~> 3.8"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.8"
     }
   }
 }
@@ -35,9 +39,9 @@ action "local_command" "greet" {
       <<-EOF
       echo "=== Greet Action ==="
       echo "All random_pet instances:"
-      %{ for k, p in random_pet.this ~}
+      %{for k, p in random_pet.this~}
       echo "  ${k} => ${p.id}"
-      %{ endfor ~}
+      %{endfor~}
       echo "(Note: a non-for_each action cannot tell which specific instance triggered it)"
       echo "===================="
     EOF

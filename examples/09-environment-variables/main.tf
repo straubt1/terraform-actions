@@ -1,10 +1,14 @@
 terraform {
-  required_version = ">= 1.11"
+  required_version = ">= 1.14"
 
   required_providers {
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.0"
+      version = "~> 3.8"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.8"
     }
   }
 }
@@ -24,19 +28,17 @@ resource "random_pet" "this" {
   }
 }
 
-# Injects environment variables via inline exports, then calls an external script.
-# PET_NAME and ENVIRONMENT come from Terraform; LOG_LEVEL is inherited from the
-# parent shell (e.g., `LOG_LEVEL=debug terraform apply`) — no TF variable needed.
+# Injects environment variables natively via the `environment` map (available in
+# hashicorp/local >= 2.8.0). PET_NAME and ENVIRONMENT are set by Terraform;
+# LOG_LEVEL is inherited from the parent shell (e.g., `LOG_LEVEL=debug terraform apply`)
+# — no TF variable and no inline `export` wrapper needed.
 action "local_command" "report" {
   config {
-    command = "bash"
-    arguments = ["-c",
-      <<-EOF
-      export PET_NAME="${random_pet.this.id}"
-      export ENVIRONMENT="${var.environment}"
-      ${path.module}/scripts/report.sh
-    EOF
-    ]
+    environment = {
+      PET_NAME    = random_pet.this.id
+      ENVIRONMENT = var.environment
+    }
+    command = "${path.module}/scripts/report.sh"
   }
 }
 
