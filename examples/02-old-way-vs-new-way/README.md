@@ -1,61 +1,48 @@
 # Old Way vs New Way
 
-This example demonstrates the same goal — running code after a `random_pet` resource is created or updated — using two different approaches.
+A side-by-side comparison of running code after a `random_pet` resource is created or updated, using two different approaches.
 
-## Old Way: `terraform_data` + `local-exec` Provisioners
+## What It Demonstrates
 
-Uses separate `terraform_data` resources with `local-exec` provisioners to run shell commands around the target resource.
+- **Old way** ([`old-way/`](old-way/)) — `terraform_data` + `local-exec` provisioners. A separate `terraform_data.after` resource with `triggers_replace` tied to the target resource's output value.
+- **New way** ([`new-way/`](new-way/)) — `action` blocks with the `local_command` action type, attached to the resource's `lifecycle` block via `action_trigger` with `events = [after_create, after_update]`.
 
-- **Before**: a `terraform_data` resource with `triggers_replace` tied to the same inputs as the target resource, combined with `depends_on` to enforce ordering
-- **After**: a `terraform_data` resource with `triggers_replace` tied to the target resource's output value
+> **Note:** If you are familiar with `null_resource`, the syntax of the old way is nearly identical — `terraform_data` is its modern replacement. Both use `provisioner "local-exec"` and `triggers_replace` (or `triggers` for `null_resource`).
 
-> **Note:** If you are familiar with `null_resource`, the syntax is nearly identical — `terraform_data` is its modern replacement. Both use `provisioner "local-exec"` and `triggers_replace` (or `triggers` for `null_resource`).
+## Key Points
 
-**Pros**
+**Old way — pros**
 
 - No additional providers required
 - Works with most Terraform versions
 
-**Cons**
+**Old way — cons**
 
-- Brittle: the `before` trigger must manually mirror every input that could change the target resource and can easily fall out of sync
-- Before/after logic is spread across three disconnected resources
+- Brittle: trigger inputs must manually mirror every input that could change the target resource and can easily fall out of sync
+- Logic is spread across disconnected resources
 - `terraform_data` replaces on change rather than running a discrete action
-- Triggering can affect other resource changes, making it difficult to isolate the intent of the plan
-- Plan shows 3 resources instead of 1, obscuring the actual intent
-- Output is more difficult to parse:
-```
-terraform_data.after: Creating...
-terraform_data.after: Provisioning with 'local-exec'...
-terraform_data.after (local-exec): Executing: ["/bin/sh" "-c" "echo \"$(date): AFTER random_pet create/update — pet name: probable-foal\""]
-terraform_data.after (local-exec): Tue Mar 17 15:10:52 CDT 2026: AFTER random_pet create/update — pet name: probable-foal
-terraform_data.after: Creation complete after 0s [id=a889d099-047d-0ac4-2ed0-98aec50c8571]
-```
+- Triggering can affect other resource changes, making plan intent hard to read
+- Plan shows 2 resources instead of 1, obscuring the actual intent
+- Output is harder to parse:
+  ```
+  terraform_data.after: Provisioning with 'local-exec'...
+  terraform_data.after (local-exec): Executing: ["/bin/sh" "-c" "echo \"$(date): AFTER ...\""]
+  ```
 
-## New Way: Terraform Actions
-
-Uses `action` blocks with `local_command` action type, attached to the resource's `lifecycle` block via `action_trigger`.
-
-- **After**: declared via `action_trigger` with `events = [after_create, after_update]`
-
-**Pros**
+**New way — pros**
 
 - Logic is co-located with the resource — easier to read, maintain, and reason about
-- Triggers are tied directly to resource lifecycle events, not manually synchronized inputs
-- Less brittle: no risk of the before trigger falling out of sync with the target resource
-- Plan shows 1 resource + 1 action, clearly communicating the intent
-- Output is easier to parse:
-```
-Action started: action.local_command.notify (triggered by random_pet.this)
-Action action.local_command.notify (triggered by random_pet.this):
+- Triggers are tied directly to lifecycle events, not synchronized inputs
+- Less brittle: no risk of trigger drift
+- Plan clearly shows `1 resource + 1 action`
+- Output is cleaner:
+  ```
+  Action started: action.local_command.notify (triggered by random_pet.this)
+  Action complete: action.local_command.notify (triggered by random_pet.this)
+  ```
+- Actions can be invoked standalone with `-invoke` (no resource churn)
 
-Tue Mar 17 15:12:00 CDT 2026: AFTER — random_pet create/update complete
-
-
-Action complete: action.local_command.notify (triggered by random_pet.this)
-```
-
-**Cons**
+**New way — cons**
 
 - Requires Terraform 1.11+
 
@@ -79,7 +66,7 @@ terraform apply
 
 ![demo](../../assets/02-old-way-vs-new-way-02.gif)
 
-To update old-way standalone (resource changes):
+To force re-run the old-way provisioner:
 
 ```shell
 cd old-way
@@ -88,7 +75,7 @@ terraform apply -replace=terraform_data.after
 
 ![demo](../../assets/02-old-way-vs-new-way-03.gif)
 
-To invoke new-way actions standalone (no resource changes):
+To invoke the new-way action standalone (no resource changes):
 
 ```shell
 cd new-way

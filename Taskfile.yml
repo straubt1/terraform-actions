@@ -97,6 +97,26 @@ tasks:
     cmds:
       - bash assets/08-action-variables-capture.sh > assets/08-action-variables-output.txt 2>&1
 
+  capture:09-environment-variables:
+    desc: Run capture script and update Expected Output in examples/09-environment-variables
+    cmds:
+      - bash assets/09-environment-variables-capture.sh > assets/09-environment-variables-output.txt 2>&1
+
+  capture:10a-foreach-resource:
+    desc: Run capture script and update Expected Output in examples/10a-foreach-resource
+    cmds:
+      - bash assets/10a-foreach-resource-capture.sh > assets/10a-foreach-resource-output.txt 2>&1
+
+  capture:10b-foreach-action:
+    desc: Run capture script and update Expected Output in examples/10b-foreach-action
+    cmds:
+      - bash assets/10b-foreach-action-capture.sh > assets/10b-foreach-action-output.txt 2>&1
+
+  capture:11-api:
+    desc: Run capture script and update Expected Output in examples/11-api
+    cmds:
+      - bash assets/11-api-capture.sh > assets/11-api-output.txt 2>&1
+
   capture:all:
     desc: Run all capture scripts and update Expected Output in every example README
     deps:
@@ -108,6 +128,10 @@ tasks:
       - capture:06-invoke-only
       - capture:07-inline-script
       - capture:08-action-variables
+      - capture:09-environment-variables
+      - capture:10a-foreach-resource
+      - capture:10b-foreach-action
+      - capture:11-api
 
   record:all:
     desc: Generate all demo GIFs for every example
@@ -120,6 +144,37 @@ tasks:
       - record:06-invoke-only
       - record:07-inline-script
       - record:08-action-variables
+      - record:09-environment-variables
+      - record:10a-foreach-resource
+      - record:10b-foreach-action
+      - record:11-api
+
+  record:09-environment-variables:
+    desc: Generate the demo GIFs for examples/09-environment-variables
+    cmds:
+      - vhs assets/09-environment-variables-01.tape
+      - vhs assets/09-environment-variables-02.tape
+
+  record:10a-foreach-resource:
+    desc: Generate the demo GIFs for examples/10a-foreach-resource
+    cmds:
+      - vhs assets/10a-foreach-resource-01.tape
+      - vhs assets/10a-foreach-resource-02.tape
+      - vhs assets/10a-foreach-resource-03.tape
+
+  record:10b-foreach-action:
+    desc: Generate the demo GIFs for examples/10b-foreach-action
+    cmds:
+      - vhs assets/10b-foreach-action-01.tape
+      - vhs assets/10b-foreach-action-02.tape
+      - vhs assets/10b-foreach-action-03.tape
+
+  record:11-api:
+    desc: Generate the demo GIFs for examples/11-api
+    cmds:
+      - vhs assets/11-api-01.tape
+      - vhs assets/11-api-02.tape
+      - vhs assets/11-api-03.tape
 
   record:01-hello-action:
     desc: Generate the demo GIFs for examples/01-hello-action

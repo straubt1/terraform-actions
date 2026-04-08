@@ -1,0 +1,104 @@
+=== SECTION 1: Apply with default variables ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "report" {
+        config {
+            arguments = [
+                "-c",
+                (known after apply),
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Changes to Outputs:
+  + pet_name = (known after apply)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=splendid-marten]
+Action started: action.local_command.report (triggered by random_pet.this)
+Action action.local_command.report (triggered by random_pet.this): 
+
+=== Environment Report ===
+Pet Name:    splendid-marten
+Environment: dev
+Log Level:   
+===========================
+
+
+Action complete: action.local_command.report (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "splendid-marten"
+
+=== SECTION 2: Override environment via -var, LOG_LEVEL via shell env ===
+random_pet.this: Refreshing state... [id=splendid-marten]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be replaced, as requested
+-/+ resource "random_pet" "this" {
+      ~ id        = "splendid-marten" -> (known after apply)
+        # (2 unchanged attributes hidden)
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "report" {
+        config {
+            arguments = [
+                "-c",
+                (known after apply),
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 1 to invoke.
+
+Changes to Outputs:
+  ~ pet_name = "splendid-marten" -> (known after apply)
+random_pet.this: Destroying... [id=splendid-marten]
+random_pet.this: Destruction complete after 0s
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=capable-phoenix]
+Action started: action.local_command.report (triggered by random_pet.this)
+Action action.local_command.report (triggered by random_pet.this): 
+
+=== Environment Report ===
+Pet Name:    capable-phoenix
+Environment: production
+Log Level:   debug
+===========================
+
+
+Action complete: action.local_command.report (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "capable-phoenix"
+

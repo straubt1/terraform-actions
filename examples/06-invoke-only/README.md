@@ -8,15 +8,13 @@ Actions that are **not attached to any resource lifecycle**. They exist solely t
 - Standalone invocation via `terraform apply -invoke=<action address>`
 - Practical Day 2 operation patterns (health checks, cache clearing)
 
-## When to Use
+## Key Points
 
-The `-invoke` flag is useful for **Day 2 operations** — ad-hoc tasks that need to run against existing infrastructure:
-
-- Cache invalidation
-- Certificate rotation
-- Health checks
-- On-demand report generation
-- Manual triggering of notifications
+- `-invoke` runs the action in isolation — no resources are planned or applied
+- Actions do not need to be attached to a resource lifecycle to be invoked
+- The action code can be updated and re-invoked without changing any resource state
+- A normal `terraform apply` with no `-invoke` flag will have nothing to do in this example
+- The `-invoke` flag is the primary entry point for **Day 2 operations** — ad-hoc tasks against existing infrastructure (cache invalidation, certificate rotation, health checks, on-demand reports, manual notifications)
 
 ## Usage
 
@@ -73,10 +71,3 @@ Cache cleared successfully.
 
 Action complete: action.local_command.cache_clear (triggered by CLI)
 ```
-
-## Key Points
-
-- `-invoke` runs the action in isolation — no resources are planned or applied
-- Actions do not need to be attached to a resource lifecycle to be invoked
-- The action code can be updated and re-invoked without changing any resource state
-- A normal `terraform apply` with no `-invoke` flag will have nothing to do in this example

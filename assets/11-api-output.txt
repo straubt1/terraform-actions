@@ -1,0 +1,217 @@
+=== SECTION 1: Apply ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "call_api" {
+        config {
+            arguments = [
+                "-c",
+                <<-EOT
+                    echo "=== Calling https://httpbin.org/bearer ==="
+                    curl -sS \
+                      -H "Authorization: Bearer demo-token-not-a-real-secret" \
+                      -H "Accept: application/json" \
+                      https://httpbin.org/bearer
+                    echo ""
+                    echo "==========================================="
+                EOT,
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Changes to Outputs:
+  + pet_name = (known after apply)
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=elegant-halibut]
+Action started: action.local_command.call_api (triggered by random_pet.this)
+Action action.local_command.call_api (triggered by random_pet.this): 
+
+=== Calling https://httpbin.org/bearer ===
+{
+  "authenticated": true, 
+  "token": "demo-token-not-a-real-secret"
+}
+
+===========================================
+
+
+Action complete: action.local_command.call_api (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "elegant-halibut"
+
+=== SECTION 2: Re-trigger by replace ===
+random_pet.this: Refreshing state... [id=elegant-halibut]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # random_pet.this will be replaced, as requested
+-/+ resource "random_pet" "this" {
+      ~ id        = "elegant-halibut" -> (known after apply)
+        # (2 unchanged attributes hidden)
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "call_api" {
+        config {
+            arguments = [
+                "-c",
+                <<-EOT
+                    echo "=== Calling https://httpbin.org/bearer ==="
+                    curl -sS \
+                      -H "Authorization: Bearer demo-token-not-a-real-secret" \
+                      -H "Accept: application/json" \
+                      https://httpbin.org/bearer
+                    echo ""
+                    echo "==========================================="
+                EOT,
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 1 to invoke.
+
+Changes to Outputs:
+  ~ pet_name = "elegant-halibut" -> (known after apply)
+random_pet.this: Destroying... [id=elegant-halibut]
+random_pet.this: Destruction complete after 0s
+random_pet.this: Creating...
+random_pet.this: Creation complete after 0s [id=stirring-cricket]
+Action started: action.local_command.call_api (triggered by random_pet.this)
+Action action.local_command.call_api (triggered by random_pet.this): 
+
+=== Calling https://httpbin.org/bearer ===
+{
+  "authenticated": true, 
+  "token": "demo-token-not-a-real-secret"
+}
+
+===========================================
+
+
+Action complete: action.local_command.call_api (triggered by random_pet.this)
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "stirring-cricket"
+
+=== SECTION 3: Invoke standalone ===
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.call_api will be invoked
+    action "local_command" "call_api" {
+        config {
+            arguments = [
+                "-c",
+                <<-EOT
+                    echo "=== Calling https://httpbin.org/bearer ==="
+                    curl -sS \
+                      -H "Authorization: Bearer demo-token-not-a-real-secret" \
+                      -H "Accept: application/json" \
+                      https://httpbin.org/bearer
+                    echo ""
+                    echo "==========================================="
+                EOT,
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.call_api (triggered by CLI)
+Action action.local_command.call_api (triggered by CLI): 
+
+=== Calling https://httpbin.org/bearer ===
+{
+  "authenticated": true, 
+  "token": "demo-token-not-a-real-secret"
+}
+
+===========================================
+
+
+Action complete: action.local_command.call_api (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "stirring-cricket"
+
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.call_api will be invoked
+    action "local_command" "call_api" {
+        config {
+            arguments = [
+                "-c",
+                <<-EOT
+                    echo "=== Calling https://httpbin.org/bearer ==="
+                    curl -sS \
+                      -H "Authorization: Bearer another-token" \
+                      -H "Accept: application/json" \
+                      https://httpbin.org/bearer
+                    echo ""
+                    echo "==========================================="
+                EOT,
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.call_api (triggered by CLI)
+Action action.local_command.call_api (triggered by CLI): 
+
+=== Calling https://httpbin.org/bearer ===
+{
+  "authenticated": true, 
+  "token": "another-token"
+}
+
+===========================================
+
+
+Action complete: action.local_command.call_api (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_name = "stirring-cricket"
+

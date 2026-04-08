@@ -1,0 +1,247 @@
+=== SECTION 1: Initial apply ===
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_pet.this["alpha"] will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "greet" {
+        config {
+            arguments = [
+                "-c",
+                (known after apply),
+            ]
+            command   = "bash"
+        }
+    }
+
+
+  # random_pet.this["bravo"] will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "greet" {
+        config {
+            arguments = [
+                "-c",
+                (known after apply),
+            ]
+            command   = "bash"
+        }
+    }
+
+
+  # random_pet.this["charlie"] will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "greet" {
+        config {
+            arguments = [
+                "-c",
+                (known after apply),
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 3 to add, 0 to change, 0 to destroy. Actions: 3 to invoke.
+
+Changes to Outputs:
+  + pet_names = {
+      + alpha   = (known after apply)
+      + bravo   = (known after apply)
+      + charlie = (known after apply)
+    }
+random_pet.this["charlie"]: Creating...
+random_pet.this["alpha"]: Creating...
+random_pet.this["bravo"]: Creating...
+random_pet.this["bravo"]: Creation complete after 0s [id=touching-sheep]
+random_pet.this["alpha"]: Creation complete after 0s [id=immune-sawfish]
+random_pet.this["charlie"]: Creation complete after 0s [id=trusty-joey]
+Action started: action.local_command.greet (triggered by random_pet.this["alpha"])
+Action started: action.local_command.greet (triggered by random_pet.this["bravo"])
+Action started: action.local_command.greet (triggered by random_pet.this["charlie"])
+Action action.local_command.greet (triggered by random_pet.this["charlie"]): 
+
+=== Greet Action ===
+All random_pet instances:
+  alpha => immune-sawfish
+  bravo => touching-sheep
+  charlie => trusty-joey
+(Note: a non-for_each action cannot tell which specific instance triggered it)
+====================
+
+
+Action action.local_command.greet (triggered by random_pet.this["alpha"]): 
+
+=== Greet Action ===
+All random_pet instances:
+  alpha => immune-sawfish
+  bravo => touching-sheep
+  charlie => trusty-joey
+(Note: a non-for_each action cannot tell which specific instance triggered it)
+====================
+
+
+Action complete: action.local_command.greet (triggered by random_pet.this["alpha"])
+Action complete: action.local_command.greet (triggered by random_pet.this["charlie"])
+Action action.local_command.greet (triggered by random_pet.this["bravo"]): 
+
+=== Greet Action ===
+All random_pet instances:
+  alpha => immune-sawfish
+  bravo => touching-sheep
+  charlie => trusty-joey
+(Note: a non-for_each action cannot tell which specific instance triggered it)
+====================
+
+
+Action complete: action.local_command.greet (triggered by random_pet.this["bravo"])
+
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed. Actions: 3 invoked.
+
+Outputs:
+
+pet_names = {
+  "alpha" = "immune-sawfish"
+  "bravo" = "touching-sheep"
+  "charlie" = "trusty-joey"
+}
+
+=== SECTION 2: Re-trigger one instance ===
+random_pet.this["charlie"]: Refreshing state... [id=trusty-joey]
+random_pet.this["bravo"]: Refreshing state... [id=touching-sheep]
+random_pet.this["alpha"]: Refreshing state... [id=immune-sawfish]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # random_pet.this["bravo"] will be replaced, as requested
+-/+ resource "random_pet" "this" {
+      ~ id        = "touching-sheep" -> (known after apply)
+        # (2 unchanged attributes hidden)
+    }
+
+    # Actions to be invoked after this change in order:
+    action "local_command" "greet" {
+        config {
+            arguments = [
+                "-c",
+                (known after apply),
+            ]
+            command   = "bash"
+        }
+    }
+
+
+Plan: 1 to add, 0 to change, 1 to destroy. Actions: 1 to invoke.
+
+Changes to Outputs:
+  ~ pet_names = {
+      ~ bravo   = "touching-sheep" -> (known after apply)
+        # (2 unchanged attributes hidden)
+    }
+random_pet.this["bravo"]: Destroying... [id=touching-sheep]
+random_pet.this["bravo"]: Destruction complete after 0s
+random_pet.this["bravo"]: Creating...
+random_pet.this["bravo"]: Creation complete after 0s [id=careful-buck]
+Action started: action.local_command.greet (triggered by random_pet.this["bravo"])
+Action action.local_command.greet (triggered by random_pet.this["bravo"]): 
+
+=== Greet Action ===
+All random_pet instances:
+  alpha => immune-sawfish
+  bravo => careful-buck
+  charlie => trusty-joey
+(Note: a non-for_each action cannot tell which specific instance triggered it)
+====================
+
+
+Action complete: action.local_command.greet (triggered by random_pet.this["bravo"])
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_names = {
+  "alpha" = "immune-sawfish"
+  "bravo" = "careful-buck"
+  "charlie" = "trusty-joey"
+}
+
+=== SECTION 3: Invoke standalone ===
+random_pet.this["charlie"]: Refreshing state... [id=trusty-joey]
+random_pet.this["bravo"]: Refreshing state... [id=careful-buck]
+random_pet.this["alpha"]: Refreshing state... [id=immune-sawfish]
+
+Terraform will perform the following actions:
+
+Plan: 0 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+
+Terraform will invoke the following action(s):
+
+  # action.local_command.greet will be invoked
+    action "local_command" "greet" {
+        config {
+            arguments = [
+                "-c",
+                <<-EOT
+                    echo "=== Greet Action ==="
+                    echo "All random_pet instances:"
+                          echo "  alpha => immune-sawfish"
+                          echo "  bravo => careful-buck"
+                          echo "  charlie => trusty-joey"
+                          echo "(Note: a non-for_each action cannot tell which specific instance triggered it)"
+                    echo "===================="
+                EOT,
+            ]
+            command   = "bash"
+        }
+    }
+
+Action started: action.local_command.greet (triggered by CLI)
+Action action.local_command.greet (triggered by CLI): 
+
+=== Greet Action ===
+All random_pet instances:
+  alpha => immune-sawfish
+  bravo => careful-buck
+  charlie => trusty-joey
+(Note: a non-for_each action cannot tell which specific instance triggered it)
+====================
+
+
+Action complete: action.local_command.greet (triggered by CLI)
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed. Actions: 1 invoked.
+
+Outputs:
+
+pet_names = {
+  "alpha" = "immune-sawfish"
+  "bravo" = "careful-buck"
+  "charlie" = "trusty-joey"
+}
+
