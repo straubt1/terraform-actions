@@ -15,12 +15,6 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "log_level" {
-  description = "Log level for the action script"
-  type        = string
-  default     = "info"
-}
-
 resource "random_pet" "this" {
   lifecycle {
     action_trigger {
@@ -31,7 +25,8 @@ resource "random_pet" "this" {
 }
 
 # Injects environment variables via inline exports, then calls an external script.
-# The script reads values from the environment — no positional arguments needed.
+# PET_NAME and ENVIRONMENT come from Terraform; LOG_LEVEL is inherited from the
+# parent shell (e.g., `LOG_LEVEL=debug terraform apply`) — no TF variable needed.
 action "local_command" "report" {
   config {
     command = "bash"
@@ -39,7 +34,6 @@ action "local_command" "report" {
       <<-EOF
       export PET_NAME="${random_pet.this.id}"
       export ENVIRONMENT="${var.environment}"
-      export LOG_LEVEL="${var.log_level}"
       ${path.module}/scripts/report.sh
     EOF
     ]

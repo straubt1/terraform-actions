@@ -7,6 +7,7 @@ Demonstrates injecting environment variables into action scripts using inline `e
 - Passing resource attributes and Terraform variables as environment variables to action scripts
 - Inline `export` wrapper pattern (since `local_command` doesn't yet support a native `env` config)
 - Scripts that read `$PET_NAME`, `$ENVIRONMENT`, `$LOG_LEVEL` from the environment
+- Inheriting an env var (`LOG_LEVEL`) from the parent shell — no Terraform variable required
 
 ## Usage
 
@@ -20,8 +21,8 @@ terraform apply
 ![demo](../../assets/09-environment-variables-01.gif)
 
 ```shell
-# Override environment variables via -var
-terraform apply -replace=random_pet.this -var environment="production" -var log_level="debug"
+# Override `environment` via -var, and set LOG_LEVEL in the parent shell
+LOG_LEVEL=debug terraform apply -replace=random_pet.this -var environment="production"
 ```
 
 ![demo](../../assets/09-environment-variables-02.gif)

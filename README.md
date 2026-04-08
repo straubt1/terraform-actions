@@ -132,6 +132,8 @@ Actions are pure side-effect operations — notifications, cache flushes, valida
 | [07-inline-script](examples/07-inline-script/) | Inline bash script in an action block using heredoc syntax |
 | [08-action-variables](examples/08-action-variables/) | Passing variables to actions and overriding them with `-var` on `-invoke` |
 | [09-environment-variables](examples/09-environment-variables/) | Injecting environment variables into action scripts using inline exports |
+| [10a-foreach-resource](examples/10a-foreach-resource/) | `for_each` on a resource that triggers a single shared action |
+| [10b-foreach-action](examples/10b-foreach-action/) | `for_each` on both the resource and the action, paired by key |
 
 ## Thoughts on Additional Features
 
@@ -197,6 +199,39 @@ resource "local_file" "config" {
 # Ideally, you could express this dependency directly:
 # depends_on = [action.local_command.create_dir]
 ```
+
+### Triggering Resource Context
+
+Today, an action has no information about *what triggered it*. When the action runs, it doesn't know which resource fired it, which lifecycle event ran (`before_create` vs `after_update`), or whether it was invoked by Terraform or directly via `-invoke`. The action block is evaluated statically — it can only reference resources by their fully-qualified address, not by relationship to the call site.
+
+A native `trigger` reference would expose context about the calling `action_trigger` block and the resource that fired it:
+
+```hcl
+# Desired syntax (not yet supported)
+action "local_command" "report" {
+  config {
+    command = "bash"
+    arguments = ["-c",
+      <<-EOF
+      echo "Events:    ${trigger.events}"       # e.g. ["after_create","after_update"]
+      echo "Actions:   ${trigger.actions}"      # ordered list of actions in this trigger
+      echo "Condition: ${trigger.condition}"    # the condition expression result
+      echo "Resource:  ${trigger.resource}"     # full resource object that fired
+      echo "Pet name:  ${trigger.resource.id}"  # any attribute on the resource
+    EOF
+    ]
+  }
+}
+```
+
+Available fields:
+
+- `trigger.events` — array of lifecycle events on the firing `action_trigger` block (e.g. `[after_create, after_update]`)
+- `trigger.actions` — array of actions defined in the trigger, ordered by execution priority
+- `trigger.condition` — the evaluated condition expression on the trigger (true when the action fires)
+- `trigger.resource` — the full resource object (all attributes) that owns the lifecycle block
+
+With this, a single action could be reused across many resources and still produce meaningful, resource-aware output — log lines, notifications, audit records — without hard-coding addresses or duplicating the action per instance.
 
 ### Native Environment Variable Support
 
